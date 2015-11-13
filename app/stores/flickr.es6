@@ -5,12 +5,11 @@ import _ from 'lodash';
 import FlickrActions from '../actions/flickr';
 
 /**
-* Install\uireact\Store
+* UIReact\Flickr\Store
 *
 * @author Alexandre Moraes | http://github.com/kalvinmoraes
 * @license MIT | http://opensource.org/licenses/MIT
 */
-
 class FlickrStore {
     constructor() {
         this.bindListeners({
@@ -36,8 +35,7 @@ class FlickrStore {
     onFetch() {
         this.jsonp('https://api.flickr.com/services/feeds/photos_public.gne?format=json', 'jsonFlickrFeed')
         .then((data) => {
-            console.log(data);
-            this.flickrImages = data;
+            this.setState({'flickrImages': data, 'preLoader': false});
         });
     }
 

@@ -20,7 +20,7 @@ import UIReactStore from '../../stores/uireact';
 import UIReactActions from '../../actions/uireact';
 
 /**
-* ReactUI Home component
+* UIReact Home component
 *
 * @author Alexandre Moraes | http://github.com/kalvinmoraes
 * @license MIT | http://opensource.org/licenses/MIT
@@ -41,7 +41,7 @@ class UIReactHome extends React.Component {
 
         /**
          * React Components using ES6 classes no longer autobind `this` to
-         * non React methods
+         * non React methods so we need to bind for ourselves
          *
          * Ref:
          * https://github.com/goatslacker/alt/issues/283#issuecomment-107463147
@@ -50,9 +50,9 @@ class UIReactHome extends React.Component {
          this.handleTouchTap = this.handleTouchTap.bind(this);
          this.triggerLeftNav = this.triggerLeftNav.bind(this);
 
-         this.state = {
+         this.setState({
              muiTheme: ThemeManager.getMuiTheme(LightRawTheme)
-         }
+         });
     }
 
     /**
@@ -75,6 +75,9 @@ class UIReactHome extends React.Component {
         };
     }
 
+    /**
+     * When component will mount. Set MuiTheme.
+     */
     componentWillMount() {
         let newMuiTheme = ThemeManager.modifyRawThemePalette(this.state.muiTheme, {
             accent1Color: Colors.lightGreen500
@@ -84,14 +87,14 @@ class UIReactHome extends React.Component {
     }
 
     /**
-     * When component mount. Start listen to uireact Store
+     * When component mount. Start listen to UIReact Store
      */
     componentDidMount() {
         UIReactStore.listen(this.onChange);
     }
 
     /**
-     * When component unmount. Stop listen to uireact Store
+     * When component unmount. Stop listen to UIReact Store
      */
     componentWillUnmount() {
         UIReactStore.unlisten(this.onChange);
@@ -121,7 +124,8 @@ class UIReactHome extends React.Component {
     /**
      * Trigger the left nav
      */
-    triggerLeftNav() {
+    triggerLeftNav(e) {
+        e.preventDefault()
         this.state.leftNav.toggle();
     }
 
@@ -148,15 +152,6 @@ class UIReactHome extends React.Component {
                 <AppBar
                     title="Home"
                     onLeftIconButtonTouchTap={this.triggerLeftNav}
-                    iconElementRight={
-                        <IconMenu iconButtonElement={
-                          <IconButton><MoreVert /></IconButton>
-                        }>
-                          <MenuItem primaryText="Refresh" />
-                          <MenuItem primaryText="Help" />
-                          <MenuItem primaryText="Sign out" />
-                        </IconMenu>
-                    }
                     />
 
                 <div style={containerStyle}>
@@ -179,7 +174,7 @@ class UIReactHome extends React.Component {
                 </div>
 
             </div>
-        )
+    )
     }
 
 }

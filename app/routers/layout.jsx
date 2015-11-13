@@ -20,8 +20,10 @@ import Colors from 'material-ui/lib/styles/colors';
 
 // Common components
 import CircularProgressComponent from '../components/circular-progress';
+
 import UIReactStore from '../stores/uireact';
 import UIReactActions from '../actions/uireact';
+import FlickrStore from '../stores/flickr';
 
 /**
 * React-UI layout
@@ -76,14 +78,17 @@ class UIReactLayout extends React.Component {
      * Stores used by this component
      */
     static getStores() {
-        return [UIReactStore]
+        return [UIReactStore, FlickrStore]
     }
 
     /**
      * Used by Alt Flux to get properties from store
      */
     static getPropsFromStores() {
-        return UIReactStore.getState();
+        return {
+            ...UIReactStore.getState(),
+            ...FlickrStore.getState()
+        }
     }
 
     getChildContext() {
@@ -105,6 +110,7 @@ class UIReactLayout extends React.Component {
      */
     componentDidMount() {
         UIReactStore.listen(this.onChange);
+        FlickrStore.listen(this.onChange);
 
         // Send left nav to every component, allowing to trigger it
         // from everywhere
@@ -116,6 +122,7 @@ class UIReactLayout extends React.Component {
      */
     componentWillUnmount() {
         UIReactStore.unlisten(this.onChange);
+        FlickrStore.unlisten(this.onChange);
     }
 
     /**
@@ -128,7 +135,9 @@ class UIReactLayout extends React.Component {
 
     onLeftNavChange(e, i, m) {
         this.refs.leftNav.toggle();
-        this.props.history.pushState(null, m.route);
+        setTimeout(() => {
+            this.props.history.pushState(null, m.route);
+        }, 200);
     }
 
     /**

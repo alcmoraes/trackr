@@ -5,7 +5,7 @@ import _ from 'lodash';
 import UIReactActions from '../actions/uireact';
 
 /**
-* Install\uireact\Store
+* UIReact\Store
 *
 * @author Alexandre Moraes | http://github.com/kalvinmoraes
 * @license MIT | http://opensource.org/licenses/MIT
@@ -22,11 +22,11 @@ class UIReactStore {
     }
 
     onPreLoader(show) {
-        this.preLoader = show;
+        this.setState({'preLoader': show});
     }
 
     onSetLeftNav(leftNav) {
-        this.leftNav = leftNav;
+        this.setState({'leftNav': leftNav});
     }
 
 }
