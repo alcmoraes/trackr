@@ -2,12 +2,13 @@ import React from 'react';
 import connectToStores from 'alt/utils/connectToStores';
 import History from 'history';
 import _ from 'lodash';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
 // Material-UI components
 import LeftNav from 'material-ui/lib/left-nav';
-import Avatar from 'material-ui/lib/avatar';
+
+import AppBar from 'material-ui/lib/app-bar';
 import IconButton from 'material-ui/lib/icon-button';
-import NavigationClose from 'material-ui/lib/svg-icons/navigation/close';
 import MenuItem from 'material-ui/lib/menus/menu-item';
 import IconMenu from 'material-ui/lib/menus/icon-menu';
 import MoreVert from 'material-ui/lib/svg-icons/navigation/more-vert';
@@ -16,8 +17,8 @@ import MoreVert from 'material-ui/lib/svg-icons/navigation/more-vert';
 import ThemeManager from 'material-ui/lib/styles/theme-manager';
 import LightRawTheme from 'material-ui/lib/styles/raw-themes/light-raw-theme';
 import Colors from 'material-ui/lib/styles/colors';
-import AppBar from 'material-ui/lib/app-bar';
 
+// Common components
 import CircularProgressComponent from '../components/circular-progress';
 import UIReactStore from '../stores/uireact';
 import UIReactActions from '../actions/uireact';
@@ -43,25 +44,14 @@ class UIReactLayout extends React.Component {
         super(props);
 
         this.menuItems = [
-          { route: 'get-started', text: 'Get Started' },
-          { route: 'customization', text: 'Customization' },
-          { route: 'components', text: 'Components' },
+          { route: '/', text: 'Home' },
+          { route: '/flickr', text: 'Flickr Example' },
           { type: 'SUBHEADER', text: 'Resources' },
           {
              type: 'LINK',
              payload: 'https://github.com/kalvinmoraes/react-ui',
              text: 'GitHub'
-          },
-          {
-             text: 'Disabled',
-             disabled: true
-          },
-          {
-             type: 'LINK',
-             payload: 'https://www.google.com',
-             text: 'Disabled Link',
-             disabled: true
-          },
+          }
         ];
 
         /**
@@ -72,7 +62,7 @@ class UIReactLayout extends React.Component {
          * https://github.com/goatslacker/alt/issues/283#issuecomment-107463147
          */
          this.onChange = this.onChange.bind(this);
-         this.toggleLeftNav = this.toggleLeftNav.bind(this);
+         this.onLeftNavChange = this.onLeftNavChange.bind(this);
 
         // Here we use the same state from uireact Store but this isn't
         // necessary
@@ -115,6 +105,10 @@ class UIReactLayout extends React.Component {
      */
     componentDidMount() {
         UIReactStore.listen(this.onChange);
+
+        // Send left nav to every component, allowing to trigger it
+        // from everywhere
+        UIReactActions.setLeftNav(this.refs.leftNav);
     }
 
     /**
@@ -122,11 +116,6 @@ class UIReactLayout extends React.Component {
      */
     componentWillUnmount() {
         UIReactStore.unlisten(this.onChange);
-    }
-
-    toggleLeftNav(e) {
-        e.preventDefault();
-        this.refs.leftNav.toggle();
     }
 
     /**
@@ -137,39 +126,40 @@ class UIReactLayout extends React.Component {
         this.setState(state);
     }
 
+    onLeftNavChange(e, i, m) {
+        this.refs.leftNav.toggle();
+        this.props.history.pushState(null, m.route);
+    }
+
     /**
      * Component Render
      */
     render() {
 
-        let appWrapperStyle = {
+        let appsWrapperStyle = {
             maxWidth: '1280px',
             margin: '0 auto'
         }
 
+        const { pathname } = this.props.location
+
+        const key = pathname.split('/')[1] || 'root'
+
         return (
             <div className="wrapper">
-                <LeftNav ref="leftNav" docked={false} menuItems={this.menuItems} />
+
+                <LeftNav onChange={this.onLeftNavChange} ref="leftNav" docked={false} menuItems={this.menuItems} />
                 <CircularProgressComponent active={this.state.preLoader} />
-                <div className="appWrapper" style={appWrapperStyle}>
 
-                    <AppBar
-                        title="React-UI"
-                        onLeftIconButtonTouchTap={this.toggleLeftNav}
-                        iconElementRight={
-                            <IconMenu iconButtonElement={
-                              <IconButton><MoreVert /></IconButton>
-                            }>
-                              <MenuItem primaryText="Refresh" />
-                              <MenuItem primaryText="Help" />
-                              <MenuItem primaryText="Sign out" />
-                            </IconMenu>
-                        }
-                        />
-
-                    {this.props.children}
-
+                <div className="apps-wrapper" style={appsWrapperStyle}>
+                    <ReactCSSTransitionGroup
+                      component="div" transitionName="swap"
+                      transitionEnterTimeout={500} transitionLeaveTimeout={500}
+                    >
+                        {React.cloneElement(this.props.children || <div />, { key: key })}
+                    </ReactCSSTransitionGroup>
                 </div>
+
             </div>
         )
     }

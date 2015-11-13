@@ -15,13 +15,18 @@ class UIReactStore {
     constructor() {
 
         this.bindListeners({
-            onPreloader: UIReactActions.PRE_LOADER,
+            onPreLoader: UIReactActions.PRE_LOADER,
+            onSetLeftNav: UIReactActions.SET_LEFT_NAV
         });
 
     }
 
-    onPreloader(show) {
+    onPreLoader(show) {
         this.preLoader = show;
+    }
+
+    onSetLeftNav(leftNav) {
+        this.leftNav = leftNav;
     }
 
 }

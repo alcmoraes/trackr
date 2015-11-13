@@ -17,7 +17,7 @@ const NotFoundComponent = React.createClass({
         };
 
         return (
-            <div style={containerStyle}>
+            <div className="app-screen" style={containerStyle}>
                 <h2>Not found!</h2>
             </div>
         )

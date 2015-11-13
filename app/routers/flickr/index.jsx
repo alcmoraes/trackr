@@ -1,32 +1,39 @@
 import React from 'react';
 import connectToStores from 'alt/utils/connectToStores';
+import {Link} from 'react-router';
 
 // Material-UI Components
 import RaisedButton from 'material-ui/lib/raised-button';
 import Dialog from 'material-ui/lib/dialog';
 
+// Material-UI Components
 import AppBar from 'material-ui/lib/app-bar';
 import IconButton from 'material-ui/lib/icon-button';
 import MenuItem from 'material-ui/lib/menus/menu-item';
 import IconMenu from 'material-ui/lib/menus/icon-menu';
 import MoreVert from 'material-ui/lib/svg-icons/navigation/more-vert';
-
+import NavigationBack from 'material-ui/lib/svg-icons/navigation/arrow-back'
+import GridList from 'material-ui/lib/grid-list/grid-list';
+import GridTile from 'material-ui/lib/grid-list/grid-tile';
 // Material-UI Properties
 import ThemeManager from 'material-ui/lib/styles/theme-manager';
 import LightRawTheme from 'material-ui/lib/styles/raw-themes/light-raw-theme';
 import Colors from 'material-ui/lib/styles/colors';
 
+import FlickrStore from '../../stores/flickr';
+import FlickrActions from '../../actions/flickr';
+
 import UIReactStore from '../../stores/uireact';
 import UIReactActions from '../../actions/uireact';
 
 /**
-* ReactUI Home component
+* Flickr Example using Alt Flux component
 *
 * @author Alexandre Moraes | http://github.com/kalvinmoraes
 * @license MIT | http://opensource.org/licenses/MIT
 */
 @connectToStores
-class UIReactHome extends React.Component {
+class FlickrHome extends React.Component {
 
     static childContextTypes = {
         muiTheme: React.PropTypes.object
@@ -47,8 +54,6 @@ class UIReactHome extends React.Component {
          * https://github.com/goatslacker/alt/issues/283#issuecomment-107463147
          */
          this.onChange = this.onChange.bind(this);
-         this.handleTouchTap = this.handleTouchTap.bind(this);
-         this.triggerLeftNav = this.triggerLeftNav.bind(this);
 
          this.state = {
              muiTheme: ThemeManager.getMuiTheme(LightRawTheme)
@@ -59,14 +64,17 @@ class UIReactHome extends React.Component {
      * Stores used by this component
      */
     static getStores() {
-        return [UIReactStore]
+        return [UIReactStore, FlickrStore]
     }
 
     /**
      * Used by Alt Flux to get properties from store
      */
     static getPropsFromStores() {
-        return UIReactStore.getState();
+        return {
+            ...UIReactStore.getState(),
+            ...FlickrStore.getState()
+        }
     }
 
     getChildContext() {
@@ -88,6 +96,8 @@ class UIReactHome extends React.Component {
      */
     componentDidMount() {
         UIReactStore.listen(this.onChange);
+        FlickrStore.listen(this.onChange);
+        FlickrActions.fetch();
     }
 
     /**
@@ -95,6 +105,7 @@ class UIReactHome extends React.Component {
      */
     componentWillUnmount() {
         UIReactStore.unlisten(this.onChange);
+        FlickrStore.listen(this.onChange);
     }
 
     /**
@@ -103,19 +114,6 @@ class UIReactHome extends React.Component {
      */
     onChange(state) {
         this.setState(state);
-    }
-
-    handleTouchTap() {
-        if(!this.state.modal) {
-            UIReactActions.preLoader(true);
-            this.setState({requestCode: Math.random().toString(36).substring(5)});
-            setTimeout(() => {
-                UIReactActions.preLoader(false);
-                this.setState({modal: true});
-            }, 2000);
-        } else {
-            this.setState({modal: false});
-        }
     }
 
     /**
@@ -130,52 +128,51 @@ class UIReactHome extends React.Component {
      */
     render() {
 
-        let standardActions = [
-            {
-                text: 'Ok',
-                onTouchTap: this.handleTouchTap
-            }
-        ];
-
         let containerStyle = {
             textAlign: 'center',
             marginTop: '50px'
         };
 
+        let output = [];
+
+        if(this.state.flickrImages) {
+            output = (
+                <GridList
+                    cols={2}
+                    cellHeight={200}
+                    padding={1}
+                    style={{width: 320, height: 640, overflowY: 'auto'}}>
+                        {
+                            this.state.flickrImages.items.map((item) => {
+                                <GridTile
+                                    key={Math.ceil(Math.random(5) * 1000)}
+                                    title={item.title}
+                                    titlePosition="top"
+                                    cols="2"
+                                    rows="2">
+                                    <img src={item.media.m} />
+                                </GridTile>
+                            })
+                        }
+                </GridList>
+            );
+        } else {
+            output = (
+                <div>No images to show</div>
+            );
+        }
+
         return (
-            <div className="app-screen home-app-wrapper">
+            <div className="app-screen flickr-app-wrapper">
 
                 <AppBar
-                    title="Home"
-                    onLeftIconButtonTouchTap={this.triggerLeftNav}
-                    iconElementRight={
-                        <IconMenu iconButtonElement={
-                          <IconButton><MoreVert /></IconButton>
-                        }>
-                          <MenuItem primaryText="Refresh" />
-                          <MenuItem primaryText="Help" />
-                          <MenuItem primaryText="Sign out" />
-                        </IconMenu>
-                    }
+                    title="Flickr Example"
+                    onLeftIconButtonTouchTap={this.props.history.goBack}
+                    iconElementLeft={<IconButton><NavigationBack /></IconButton>}
                     />
 
                 <div style={containerStyle}>
-
-                    <h1>React-UI</h1>
-                    <h2>A boilerplate using</h2>
-                    <h2>ReactJS, Alt Flux, Stylus, Jade and Material-UI</h2>
-                    <h3>ES6/ES7 Ready</h3>
-
-                    <Dialog
-                        open={this.state.modal}
-                        title={"Request #" + (this.state.requestCode ? this.state.requestCode : '#0')}
-                        actions={standardActions}
-                        ref="requestDialog">
-                        This was triggered trough an onTouchTap action
-                    </Dialog>
-
-                    <RaisedButton label="Trigger Dialog" primary={true} onTouchTap={this.handleTouchTap} />
-
+                    {output}
                 </div>
 
             </div>
@@ -184,4 +181,4 @@ class UIReactHome extends React.Component {
 
 }
 
-module.exports = UIReactHome;
+module.exports = FlickrHome;
