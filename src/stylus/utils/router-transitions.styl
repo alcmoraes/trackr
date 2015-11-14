@@ -5,7 +5,8 @@
  */
 
 .apps-wrapper
-    position relative
+    > div
+        position relative
 
 .app-screen
     position absolute
@@ -13,7 +14,7 @@
     height 100%
 
 .swap-enter
-    opacity: 0
+    opacity: 1
     transition all .5s ease-in
     &.swap-enter-active
         opacity: 1

@@ -133,7 +133,7 @@ class FlickrHome extends React.Component {
      */
     historyBack(e) {
         e.preventDefault();
-        this.props.history.goBack();
+        this.props.history.pushState(null, '/');
     }
 
     /**
