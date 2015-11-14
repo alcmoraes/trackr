@@ -17,6 +17,7 @@ import CardMedia from 'material-ui/lib/card/card-media';
 import CardTitle from 'material-ui/lib/card/card-title';
 // Material-UI Properties
 import ThemeManager from 'material-ui/lib/styles/theme-manager';
+import ThemeDecorator from 'material-ui/lib/styles/theme-decorator';
 import LightRawTheme from 'material-ui/lib/styles/raw-themes/light-raw-theme';
 import Colors from 'material-ui/lib/styles/colors';
 // Stores
@@ -32,6 +33,7 @@ import UIReactActions from '../../actions/uireact';
 * @author Alexandre Moraes | http://github.com/kalvinmoraes
 * @license MIT | http://opensource.org/licenses/MIT
 */
+@ThemeDecorator(ThemeManager.getMuiTheme(LightRawTheme))
 @connectToStores
 class FlickrHome extends React.Component {
 
@@ -60,9 +62,8 @@ class FlickrHome extends React.Component {
          this.state = {
              flickrImages: {
                  items: []
-             },
-             muiTheme: ThemeManager.getMuiTheme(LightRawTheme)
-         }
+             }
+         };
     }
 
     /**
@@ -80,26 +81,6 @@ class FlickrHome extends React.Component {
             ...FlickrStore.getState(),
             ...UIReactStore.getState()
         }
-    }
-
-    /**
-     * Used by Material-UI to set themes and states
-     */
-    getChildContext() {
-        return {
-            muiTheme: this.state.muiTheme,
-        };
-    }
-
-    /**
-     * Used by Material-UI to set themes and states
-     */
-    componentWillMount() {
-        let newMuiTheme = ThemeManager.modifyRawThemePalette(this.state.muiTheme, {
-            accent1Color: Colors.lightGreen500
-        });
-
-        this.setState({muiTheme: newMuiTheme});
     }
 
     /**
