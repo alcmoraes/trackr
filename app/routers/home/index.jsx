@@ -50,9 +50,9 @@ class UIReactHome extends React.Component {
          this.handleTouchTap = this.handleTouchTap.bind(this);
          this.triggerLeftNav = this.triggerLeftNav.bind(this);
 
-         this.setState({
+         this.state = {
              muiTheme: ThemeManager.getMuiTheme(LightRawTheme)
-         });
+         };
     }
 
     /**
@@ -91,6 +91,7 @@ class UIReactHome extends React.Component {
      */
     componentDidMount() {
         UIReactStore.listen(this.onChange);
+        this.setState(UIReactStore.getState());
     }
 
     /**

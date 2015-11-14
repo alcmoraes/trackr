@@ -57,6 +57,7 @@ class FlickrHome extends React.Component {
          */
          this.onChange = this.onChange.bind(this);
          this.historyBack = this.historyBack.bind(this);
+         this.refreshFlickr = this.refreshFlickr.bind(this);
 
          this.state = {
              flickrImages: {
@@ -132,6 +133,10 @@ class FlickrHome extends React.Component {
         window.location = link;
     }
 
+    refreshFlickr() {
+        FlickrActions.fetch();
+    }
+
     /**
      * Component Render
      */
@@ -148,13 +153,19 @@ class FlickrHome extends React.Component {
                 <AppBar
                     title="Flickr Example"
                     iconElementLeft={<IconButton><NavigationBack onTouchTap={this.historyBack}/></IconButton>}
-                    />
+                    iconElementRight={
+                        <IconMenu iconButtonElement={
+                          <IconButton><MoreVert /></IconButton>
+                        }>
+                          <MenuItem onTouchTap={this.refreshFlickr} primaryText="Refresh" />
+                        </IconMenu>
+                    } />
 
                 <div style={containerStyle}>
                     <GridList cols={2}>
                     {
                         this.state.flickrImages.items.map(item =>
-                            <GridTile onTouchTap={this.goLink.bind(this, item.link)} cols={1}>
+                            <GridTile key={(item.author_id + Math.ceil(Math.random() * 100))} onTouchTap={this.goLink.bind(this, item.link)} cols={1}>
                                 <img src={item.media.m}/>
                             </GridTile>
                         )
