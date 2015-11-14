@@ -17,6 +17,13 @@ class FlickrStore {
         });
     }
 
+    /**
+     * Do a promised request to a JSONP endpoint
+     *
+     * @param  {String} url          The URL to fetch
+     * @param  {String} callbackName The callback name in the response
+     * @return {Q\Promise}
+     */
     jsonp(url, callbackName) {
         return Q.Promise((resolve, reject, notify) => {
 
@@ -32,6 +39,9 @@ class FlickrStore {
         });
     }
 
+    /**
+     * Fetch data from Flickr API
+     */
     onFetch() {
         this.jsonp('https://api.flickr.com/services/feeds/photos_public.gne?format=json', 'jsonFlickrFeed')
         .then((data) => {

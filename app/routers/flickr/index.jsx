@@ -1,11 +1,9 @@
 import React from 'react';
+// Alt Annotation
 import connectToStores from 'alt/utils/connectToStores';
-import {Link} from 'react-router';
-
 // Material-UI Components
 import RaisedButton from 'material-ui/lib/raised-button';
 import Dialog from 'material-ui/lib/dialog';
-
 // Material-UI Components
 import AppBar from 'material-ui/lib/app-bar';
 import IconButton from 'material-ui/lib/icon-button';
@@ -21,11 +19,11 @@ import CardTitle from 'material-ui/lib/card/card-title';
 import ThemeManager from 'material-ui/lib/styles/theme-manager';
 import LightRawTheme from 'material-ui/lib/styles/raw-themes/light-raw-theme';
 import Colors from 'material-ui/lib/styles/colors';
-
+// Stores
 import FlickrStore from '../../stores/flickr';
-import FlickrActions from '../../actions/flickr';
-
 import UIReactStore from '../../stores/uireact';
+// Actions
+import FlickrActions from '../../actions/flickr';
 import UIReactActions from '../../actions/uireact';
 
 /**
@@ -42,7 +40,7 @@ class FlickrHome extends React.Component {
     }
 
     /**
-     * Class importructor
+     * Class constructor
      */
     constructor(props) {
         // Get props from extended class
@@ -57,8 +55,8 @@ class FlickrHome extends React.Component {
          */
          this.onChange = this.onChange.bind(this);
          this.historyBack = this.historyBack.bind(this);
-         this.refreshFlickr = this.refreshFlickr.bind(this);
 
+         // Set the initial state for the component
          this.state = {
              flickrImages: {
                  items: []
@@ -84,12 +82,18 @@ class FlickrHome extends React.Component {
         }
     }
 
+    /**
+     * Used by Material-UI to set themes and states
+     */
     getChildContext() {
         return {
             muiTheme: this.state.muiTheme,
         };
     }
 
+    /**
+     * Used by Material-UI to set themes and states
+     */
     componentWillMount() {
         let newMuiTheme = ThemeManager.modifyRawThemePalette(this.state.muiTheme, {
             accent1Color: Colors.lightGreen500
@@ -99,7 +103,7 @@ class FlickrHome extends React.Component {
     }
 
     /**
-     * When component mount. Start listen to Flickr Store and fetch data from it.
+     * When component mount. Start listen to Flickr and UIReact Store.
      */
     componentDidMount() {
         FlickrStore.listen(this.onChange);
@@ -109,7 +113,7 @@ class FlickrHome extends React.Component {
     }
 
     /**
-     * When component unmount. Stop listen to Flickr Store
+     * When component unmount. Stop listen to Flickr and UIReact Store
      */
     componentWillUnmount() {
         FlickrStore.unlisten(this.onChange);
@@ -124,17 +128,21 @@ class FlickrHome extends React.Component {
         this.setState(state);
     }
 
+    /**
+     * Go back in navigation history
+     */
     historyBack(e) {
         e.preventDefault();
         this.props.history.goBack();
     }
 
+    /**
+     * Go to a specific link
+     *
+     * @param  {String} link URL to go to
+     */
     goLink(link) {
         window.location = link;
-    }
-
-    refreshFlickr() {
-        FlickrActions.fetch();
     }
 
     /**
@@ -151,13 +159,14 @@ class FlickrHome extends React.Component {
             <div className="app-screen flickr-app-wrapper">
 
                 <AppBar
+                    className="app-bar"
                     title="Flickr Example"
                     iconElementLeft={<IconButton><NavigationBack onTouchTap={this.historyBack}/></IconButton>}
                     iconElementRight={
                         <IconMenu iconButtonElement={
                           <IconButton><MoreVert /></IconButton>
                         }>
-                          <MenuItem onTouchTap={this.refreshFlickr} primaryText="Refresh" />
+                          <MenuItem onTouchTap={FlickrActions.fetch} primaryText="Refresh" />
                         </IconMenu>
                     } />
 

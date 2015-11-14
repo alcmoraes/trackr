@@ -1,22 +1,21 @@
 import React from 'react';
+// Alt Annotation
 import connectToStores from 'alt/utils/connectToStores';
-
 // Material-UI Components
 import RaisedButton from 'material-ui/lib/raised-button';
 import Dialog from 'material-ui/lib/dialog';
-
 import AppBar from 'material-ui/lib/app-bar';
 import IconButton from 'material-ui/lib/icon-button';
 import MenuItem from 'material-ui/lib/menus/menu-item';
 import IconMenu from 'material-ui/lib/menus/icon-menu';
 import MoreVert from 'material-ui/lib/svg-icons/navigation/more-vert';
-
 // Material-UI Properties
 import ThemeManager from 'material-ui/lib/styles/theme-manager';
 import LightRawTheme from 'material-ui/lib/styles/raw-themes/light-raw-theme';
 import Colors from 'material-ui/lib/styles/colors';
-
+// Stores
 import UIReactStore from '../../stores/uireact';
+// Actions
 import UIReactActions from '../../actions/uireact';
 
 /**
@@ -50,6 +49,7 @@ class UIReactHome extends React.Component {
          this.handleTouchTap = this.handleTouchTap.bind(this);
          this.triggerLeftNav = this.triggerLeftNav.bind(this);
 
+         // Set the initial state for the component
          this.state = {
              muiTheme: ThemeManager.getMuiTheme(LightRawTheme)
          };
@@ -69,6 +69,9 @@ class UIReactHome extends React.Component {
         return UIReactStore.getState();
     }
 
+    /**
+     * Used by Material-UI to set themes and states
+     */
     getChildContext() {
         return {
             muiTheme: this.state.muiTheme,
@@ -76,7 +79,7 @@ class UIReactHome extends React.Component {
     }
 
     /**
-     * When component will mount. Set MuiTheme.
+     * Used by Material-UI to set themes and states
      */
     componentWillMount() {
         let newMuiTheme = ThemeManager.modifyRawThemePalette(this.state.muiTheme, {
@@ -109,6 +112,12 @@ class UIReactHome extends React.Component {
         this.setState(state);
     }
 
+    /**
+     * Action for the button clicked on component.
+     *
+     * This is a dummy method. It would simulate a request and a dialog
+     * opening.
+     */
     handleTouchTap() {
         if(!this.state.modal) {
             UIReactActions.preLoader(true);
@@ -151,6 +160,7 @@ class UIReactHome extends React.Component {
             <div className="app-screen home-app-wrapper">
 
                 <AppBar
+                    className="app-bar"
                     title="Home"
                     onLeftIconButtonTouchTap={this.triggerLeftNav}
                     />
