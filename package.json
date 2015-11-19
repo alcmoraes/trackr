@@ -1,7 +1,7 @@
 {
-  "name": "React-UI",
+  "name": "Trackr",
   "author": "Alexandre Moraes",
-  "description": "A ReactJS boilerplate using Material-UI, Alt Flux, Jade and Stylus. ES6/ES7 Ready.",
+  "description": "Rastreador de encomendas dos Correios",
   "private": true,
   "version": "0.0.1",
   "dependencies": {
