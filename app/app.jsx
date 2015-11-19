@@ -16,6 +16,9 @@ import NotFound from './components/not-found';
 // Here we inject the 'onTouchTap' event on React Components
 injectTapEventPlugin();
 
+// Here we have the callback for the Cordova App
+document.addEventListener('deviceready', onDeviceReady, false);
+
 /**
 * UIReact/App.
 *
@@ -24,18 +27,19 @@ injectTapEventPlugin();
 * @author Alexandre Moraes | http://github.com/kalvinmoraes
 * @license MIT | http://opensource.org/licenses/MIT
 */
-if(document.getElementById('trackr-app')) {
+function onDeviceReady() {
+    if(document.getElementById('trackr-app')) {
 
-    ReactDOM.render((
-        <Router history={createHashHistory()} createElement={createElement}>
-            <Route path="/" component={UIReactLayout}>
-                <IndexRoute component={UIReactHome} />
-                <Route path="/:code" component={TrackrHome} />
-                <Route path="*" component={NotFound}/>
-            </Route>
-        </Router>
-    ), document.getElementById('trackr-app'));
-
+        ReactDOM.render((
+            <Router history={createHashHistory()} createElement={createElement}>
+                <Route path="/" component={UIReactLayout}>
+                    <IndexRoute component={UIReactHome} />
+                    <Route path="/:code" component={TrackrHome} />
+                    <Route path="*" component={NotFound}/>
+                </Route>
+            </Router>
+        ), document.getElementById('trackr-app'));
+    }
 }
 
 /**

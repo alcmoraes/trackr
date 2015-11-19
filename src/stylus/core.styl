@@ -1,7 +1,13 @@
 @import 'nib'
 
+*
+    tap-highlight-color rgba(0,0,0,0)
 html, body
     margin 0
+body
+    touch-callout none;               /* prevent callout to copy image, etc when tap to hold */
+    text-size-adjust none           /* prevent webkit from resizing text to fit */
+    user-select none
 
 @import 'utils/router-transitions.styl'
 @import 'utils/circular-progress-component'

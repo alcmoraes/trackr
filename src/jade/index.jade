@@ -2,10 +2,10 @@ doctype html
 html.no-js(lang='')
   head
     meta(charset='utf-8')
-    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name="format-detection", content="telephone=no")
+    meta(name="msapplication-tap-highlight", content="no")
+    meta(name="viewport", content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi")
     title Trackr
-    meta(name='description', content="Rastreador de encomendas dos Correios")
-    meta(name='viewport', content='width=device-width, initial-scale=1')
     link(rel='stylesheet', type='text/css', href='css/application.min.css')
   body
     #trackr-app
@@ -23,4 +23,5 @@ html.no-js(lang='')
           var s = document.getElementsByTagName('script')[0];
           s.parentNode.insertBefore(wf, s);
       })();
+    script(src='cordova.js')
     script(src='js/application.min.js')
