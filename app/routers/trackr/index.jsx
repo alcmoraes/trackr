@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 // Alt Annotation
 import connectToStores from 'alt/utils/connectToStores';
 // Material-UI Components
@@ -11,31 +12,31 @@ import MenuItem from 'material-ui/lib/menus/menu-item';
 import IconMenu from 'material-ui/lib/menus/icon-menu';
 import MoreVert from 'material-ui/lib/svg-icons/navigation/more-vert';
 import NavigationBack from 'material-ui/lib/svg-icons/navigation/arrow-back'
-import GridList from 'material-ui/lib/grid-list/grid-list';
-import GridTile from 'material-ui/lib/grid-list/grid-tile';
-import CardMedia from 'material-ui/lib/card/card-media';
-import CardTitle from 'material-ui/lib/card/card-title';
+import Card from 'material-ui/lib/card/card';
+import CardHeader from 'material-ui/lib/card/card-header';
+import CardText from 'material-ui/lib/card/card-text';
+import Avatar from 'material-ui/lib/avatar';
 // Material-UI Properties
 import ThemeManager from 'material-ui/lib/styles/theme-manager';
 import ThemeDecorator from 'material-ui/lib/styles/theme-decorator';
 import LightRawTheme from 'material-ui/lib/styles/raw-themes/light-raw-theme';
 import Colors from 'material-ui/lib/styles/colors';
 // Stores
-import FlickrStore from '../../stores/flickr';
+import TrackrStore from '../../stores/trackr';
 import UIReactStore from '../../stores/uireact';
 // Actions
-import FlickrActions from '../../actions/flickr';
+import TrackrActions from '../../actions/trackr';
 import UIReactActions from '../../actions/uireact';
 
 /**
-* Flickr Example using Alt Flux component
+* Trackr Example using Alt Flux component
 *
 * @author Alexandre Moraes | http://github.com/kalvinmoraes
 * @license MIT | http://opensource.org/licenses/MIT
 */
 @ThemeDecorator(ThemeManager.getMuiTheme(LightRawTheme))
 @connectToStores
-class FlickrHome extends React.Component {
+class TrackrHome extends React.Component {
 
     static childContextTypes = {
         muiTheme: React.PropTypes.object
@@ -57,12 +58,11 @@ class FlickrHome extends React.Component {
          */
          this.onChange = this.onChange.bind(this);
          this.historyBack = this.historyBack.bind(this);
+         this.refresh = this.refresh.bind(this);
 
          // Set the initial state for the component
          this.state = {
-             flickrImages: {
-                 items: []
-             }
+             trackrData: []
          };
     }
 
@@ -70,7 +70,7 @@ class FlickrHome extends React.Component {
      * Stores used by this component
      */
     static getStores() {
-        return [FlickrStore, UIReactStore]
+        return [TrackrStore, UIReactStore]
     }
 
     /**
@@ -78,26 +78,25 @@ class FlickrHome extends React.Component {
      */
     static getPropsFromStores() {
         return {
-            ...FlickrStore.getState(),
+            ...TrackrStore.getState(),
             ...UIReactStore.getState()
         }
     }
 
     /**
-     * When component mount. Start listen to Flickr and UIReact Store.
+     * When component mount. Start listen to Trackr and UIReact Store.
      */
     componentDidMount() {
-        FlickrStore.listen(this.onChange);
+        TrackrStore.listen(this.onChange);
         UIReactStore.listen(this.onChange);
-        UIReactActions.preLoader(true);
-        FlickrActions.fetch();
+        this.refresh();
     }
 
     /**
-     * When component unmount. Stop listen to Flickr and UIReact Store
+     * When component unmount. Stop listen to Trackr and UIReact Store
      */
     componentWillUnmount() {
-        FlickrStore.unlisten(this.onChange);
+        TrackrStore.unlisten(this.onChange);
         UIReactStore.unlisten(this.onChange);
     }
 
@@ -126,41 +125,52 @@ class FlickrHome extends React.Component {
         window.location = link;
     }
 
+    refresh() {
+        TrackrActions.fetch(this.props.params.code);
+    }
+
     /**
      * Component Render
      */
     render() {
 
         let containerStyle = {
-            textAlign: 'center',
-            marginTop: '5px'
+            textAlign: 'left'
         };
 
         return (
-            <div className="app-screen flickr-app-wrapper">
+            <div className="app-screen trackr-app-wrapper">
 
                 <AppBar
                     className="app-bar"
-                    title="Flickr Example"
+                    title={this.props.params.code}
                     iconElementLeft={<IconButton><NavigationBack onTouchTap={this.historyBack}/></IconButton>}
                     iconElementRight={
                         <IconMenu iconButtonElement={
                           <IconButton><MoreVert /></IconButton>
                         }>
-                          <MenuItem onTouchTap={FlickrActions.fetch} primaryText="Refresh" />
+                          <MenuItem onTouchTap={this.refresh} primaryText="Atualizar" />
                         </IconMenu>
                     } />
 
                 <div style={containerStyle}>
-                    <GridList cols={2}>
                     {
-                        this.state.flickrImages.items.map(item =>
-                            <GridTile key={(item.author_id + Math.ceil(Math.random() * 100))} onTouchTap={this.goLink.bind(this, item.link)} cols={1}>
-                                <img src={item.media.m}/>
-                            </GridTile>
+                        this.state.trackrData.map(item =>
+                            <Card key={(Math.ceil(Math.random() * 100))}>
+                                <CardHeader
+                                    title={item.data}
+                                    subtitle={_.capitalize(item.local)}
+                                    avatar={<Avatar>{item.acao.charAt(0).toUpperCase()}</Avatar>}
+                                    actAsExpander={true}
+                                    showExpandableButton={true}>
+                                </CardHeader>
+                                <CardText expandable={true}>
+                                    <h2>{_.capitalize(item.acao)}</h2>
+                                    <h3>{_.capitalize(item.detalhes)}</h3>
+                                </CardText>
+                            </Card>
                         )
                     }
-                    </GridList>
                 </div>
 
             </div>
@@ -169,4 +179,4 @@ class FlickrHome extends React.Component {
 
 }
 
-module.exports = FlickrHome;
+module.exports = TrackrHome;

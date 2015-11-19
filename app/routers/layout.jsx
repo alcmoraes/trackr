@@ -19,7 +19,7 @@ import Colors from 'material-ui/lib/styles/colors';
 import CircularProgressComponent from '../components/circular-progress';
 // Stores
 import UIReactStore from '../stores/uireact';
-import FlickrStore from '../stores/flickr';
+import TrackrStore from '../stores/trackr';
 // Actions
 import UIReactActions from '../actions/uireact';
 
@@ -49,11 +49,10 @@ class UIReactLayout extends React.Component {
         // The LeftNav menu.
         this.menuItems = [
           { route: '/', text: 'Home' },
-          { route: '/flickr', text: 'Flickr Example' },
           { type: 'SUBHEADER', text: 'Resources' },
           {
              type: 'LINK',
-             payload: 'https://github.com/kalvinmoraes/react-ui',
+             payload: 'https://github.com/kalvinmoraes/trackr',
              text: 'GitHub'
           }
         ];
@@ -78,7 +77,7 @@ class UIReactLayout extends React.Component {
      * Stores used by this component
      */
     static getStores() {
-        return [UIReactStore, FlickrStore]
+        return [UIReactStore, TrackrStore]
     }
 
     /**
@@ -87,16 +86,16 @@ class UIReactLayout extends React.Component {
     static getPropsFromStores() {
         return {
             ...UIReactStore.getState(),
-            ...FlickrStore.getState()
+            ...TrackrStore.getState()
         }
     }
 
     /**
-     * When component mount. Start listen to UIReact and Flickr Stores
+     * When component mount. Start listen to UIReact and Trackr Stores
      */
     componentDidMount() {
         UIReactStore.listen(this.onChange);
-        FlickrStore.listen(this.onChange);
+        TrackrStore.listen(this.onChange);
 
         // Send left nav to every component, allowing to trigger it
         // from everywhere
@@ -104,11 +103,11 @@ class UIReactLayout extends React.Component {
     }
 
     /**
-     * When component unmount. Stop listen to UIReact and Flickr Stores
+     * When component unmount. Stop listen to UIReact and Trackr Stores
      */
     componentWillUnmount() {
         UIReactStore.unlisten(this.onChange);
-        FlickrStore.unlisten(this.onChange);
+        TrackrStore.unlisten(this.onChange);
     }
 
     /**

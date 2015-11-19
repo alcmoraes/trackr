@@ -9,6 +9,7 @@ import IconButton from 'material-ui/lib/icon-button';
 import MenuItem from 'material-ui/lib/menus/menu-item';
 import IconMenu from 'material-ui/lib/menus/icon-menu';
 import MoreVert from 'material-ui/lib/svg-icons/navigation/more-vert';
+import TextField from 'material-ui/lib/text-field';
 // Material-UI Properties
 import ThemeManager from 'material-ui/lib/styles/theme-manager';
 import ThemeDecorator from 'material-ui/lib/styles/theme-decorator';
@@ -50,10 +51,6 @@ class UIReactHome extends React.Component {
          this.onChange = this.onChange.bind(this);
          this.handleTouchTap = this.handleTouchTap.bind(this);
          this.triggerLeftNav = this.triggerLeftNav.bind(this);
-
-         this.state = {
-             modal: false
-         }
 
     }
 
@@ -100,17 +97,9 @@ class UIReactHome extends React.Component {
      * This is a dummy method. It would simulate a request and a dialog
      * opening.
      */
-    handleTouchTap() {
-        if(!this.state.modal) {
-            UIReactActions.preLoader(true);
-            this.setState({requestCode: Math.random().toString(36).substring(5)});
-            setTimeout(() => {
-                UIReactActions.preLoader(false);
-                this.setState({modal: true});
-            }, 2000);
-        } else {
-            this.setState({modal: false});
-        }
+    handleTouchTap(e) {
+        e.preventDefault();
+        this.props.history.pushState(null, '/'+this.refs.code.getValue());
     }
 
     /**
@@ -143,26 +132,22 @@ class UIReactHome extends React.Component {
 
                 <AppBar
                     className="app-bar"
-                    title="Home"
+                    title=""
                     onLeftIconButtonTouchTap={this.triggerLeftNav}
                     />
 
                 <div style={containerStyle}>
 
-                    <h1>React-UI</h1>
-                    <h2>A boilerplate using</h2>
-                    <h2>ReactJS, Alt Flux, Stylus, Jade and Material-UI</h2>
-                    <h3>ES6/ES7 Ready</h3>
+                    <h1>Trackr</h1>
+                    <h2>Rastreio de encomendas</h2>
 
-                    <Dialog
-                        open={this.state.modal}
-                        title={"Request #" + (this.state.requestCode ? this.state.requestCode : '#0')}
-                        actions={standardActions}
-                        ref="requestDialog">
-                        This was triggered trough an onTouchTap action
-                    </Dialog>
+                    <div>
+                        <TextField
+                            ref="code"
+                            hintText="DM671114492BR" />
+                    </div>
 
-                    <RaisedButton label="Trigger Dialog" primary={true} onTouchTap={this.handleTouchTap} />
+                    <RaisedButton label="Rastrear" primary={true} onTouchTap={this.handleTouchTap} />
 
                 </div>
 

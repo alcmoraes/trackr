@@ -10,7 +10,7 @@ import createHashHistory from 'history/lib/createHashHistory';
 // Routers
 import UIReactLayout from './routers/layout';
 import UIReactHome from './routers/home/index';
-import FlickrHome from './routers/flickr/index';
+import TrackrHome from './routers/trackr/index';
 import NotFound from './components/not-found';
 
 // Here we inject the 'onTouchTap' event on React Components
@@ -24,17 +24,17 @@ injectTapEventPlugin();
 * @author Alexandre Moraes | http://github.com/kalvinmoraes
 * @license MIT | http://opensource.org/licenses/MIT
 */
-if(document.getElementById('uireact-app')) {
+if(document.getElementById('trackr-app')) {
 
     ReactDOM.render((
         <Router history={createHashHistory()} createElement={createElement}>
             <Route path="/" component={UIReactLayout}>
                 <IndexRoute component={UIReactHome} />
-                <Route path="/flickr" component={FlickrHome} />
+                <Route path="/:code" component={TrackrHome} />
                 <Route path="*" component={NotFound}/>
             </Route>
         </Router>
-    ), document.getElementById('uireact-app'));
+    ), document.getElementById('trackr-app'));
 
 }
 
