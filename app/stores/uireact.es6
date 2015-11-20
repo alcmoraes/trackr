@@ -16,7 +16,9 @@ class UIReactStore {
 
         this.bindListeners({
             onPreLoader: UIReactActions.PRE_LOADER,
-            onSetLeftNav: UIReactActions.SET_LEFT_NAV
+            onSetLeftNav: UIReactActions.SET_LEFT_NAV,
+            onSetHistory: UIReactActions.SET_HISTORY,
+            onGoBack: UIReactActions.GO_BACK
         });
 
     }
@@ -27,6 +29,20 @@ class UIReactStore {
 
     onSetLeftNav(leftNav) {
         this.setState({'leftNav': leftNav});
+    }
+
+    onSetHistory(history) {
+        this.history = history;
+        this.setState({'history': history});
+    }
+
+    onGoBack() {
+        if (document.referrer == "") {
+            this.history.pushState(null, '/');
+        } else {
+            this.history.goBack()
+        }
+        this.preventDefault();
     }
 
 }

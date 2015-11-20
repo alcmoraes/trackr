@@ -15,6 +15,14 @@ class TrackrActions {
     fetch(code) {
         this.dispatch(code);
     }
+
+    toggleItem(item) {
+        this.dispatch(item);
+    }
+
+    syncLocalStorage() {
+        this.dispatch();
+    }
 }
 
 module.exports = Alt.createActions(TrackrActions);

@@ -14,11 +14,59 @@ class TrackrStore {
     constructor() {
         this.bindListeners({
             onFetch: TrackrActions.FETCH,
+            onSyncLocalStorage: TrackrActions.SYNC_LOCAL_STORAGE,
+            onToggleItem: TrackrActions.TOGGLE_ITEM
         });
+
+        this.local_identity = "my-packs";
+
+        this.temp_packages = [];
 
         this.package_track_url = _.template('http://developers.agenciaideias.com.br/correios/rastreamento/json/<%= code %>');
     }
 
+    /**
+     * Save the new local storage items and update state
+     */
+    _sync() {
+
+        localStorage.setItem(this.local_identity, JSON.stringify(this.temp_packages));
+
+        this.setState({
+            myTrackrData: this.temp_packages
+        });
+
+    }
+
+    /**
+     * Sync local storage
+     */
+    onSyncLocalStorage() {
+        this.temp_packages = JSON.parse(localStorage.getItem(this.local_identity)) || [];
+        this._sync();
+    }
+
+    /**
+     * Toggle item on saved packages
+     *
+     * @param  {Object} item A package item
+     */
+    onToggleItem(item) {
+        let status = false;
+        for(let storedItem of this.temp_packages) {
+            if(storedItem.code == item.code) {
+                let pos = this.temp_packages.indexOf(storedItem);
+                this.temp_packages.splice(pos, 1);
+                status = true;
+                this._sync();
+            }
+        }
+        if(!status) {
+            this.temp_packages.push(item);
+            this._sync();
+        }
+
+    }
 
     /**
      * Do a promised request to Correios API
@@ -79,7 +127,10 @@ class TrackrStore {
         .catch((err) => {
             this.setState({
                 'trackrData': [],
-                'message': err.message
+                'message': {
+                    title: "Erro",
+                    detail: err.message
+                }
             });
         }).finally(() => {
             this.setState({

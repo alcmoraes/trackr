@@ -16,6 +16,7 @@ import Card from 'material-ui/lib/card/card';
 import CardHeader from 'material-ui/lib/card/card-header';
 import CardText from 'material-ui/lib/card/card-text';
 import Avatar from 'material-ui/lib/avatar';
+import StarBorder from 'material-ui/lib/svg-icons/toggle/star-border'
 // Material-UI Properties
 import ThemeManager from 'material-ui/lib/styles/theme-manager';
 import ThemeDecorator from 'material-ui/lib/styles/theme-decorator';
@@ -57,8 +58,8 @@ class TrackrHome extends React.Component {
          * https://github.com/goatslacker/alt/issues/283#issuecomment-107463147
          */
          this.onChange = this.onChange.bind(this);
-         this.historyBack = this.historyBack.bind(this);
          this.refresh = this.refresh.bind(this);
+         this.toggleItem = this.toggleItem.bind(this);
 
          // Set the initial state for the component
          this.state = {
@@ -89,6 +90,7 @@ class TrackrHome extends React.Component {
     componentDidMount() {
         TrackrStore.listen(this.onChange);
         UIReactStore.listen(this.onChange);
+        this.setState(UIReactStore.getState());
         this.refresh();
     }
 
@@ -109,24 +111,23 @@ class TrackrHome extends React.Component {
     }
 
     /**
-     * Go back in navigation history
+     * Refresh the package tracker
      */
-    historyBack(e) {
-        e.preventDefault();
-        this.props.history.pushState(null, '/');
+    refresh() {
+        TrackrActions.fetch(this.props.params.code);
     }
 
     /**
-     * Go to a specific link
+     * Toggle item in local storage
      *
-     * @param  {String} link URL to go to
+     * TODO: Allow user to set a package name
      */
-    goLink(link) {
-        window.location = link;
-    }
-
-    refresh() {
-        TrackrActions.fetch(this.props.params.code);
+    toggleItem(e) {
+        e.preventDefault();
+        TrackrActions.toggleItem({
+            name: "Produto",
+            code: this.state.code
+        });
     }
 
     /**
@@ -144,19 +145,22 @@ class TrackrHome extends React.Component {
                 <AppBar
                     className="app-bar"
                     title={Boolean(this.state.message) ? "" : this.state.code}
-                    iconElementLeft={<IconButton><NavigationBack onTouchTap={this.historyBack}/></IconButton>}
+                    iconElementLeft={<IconButton><NavigationBack onTouchTap={UIReactActions.goBack} onClick={UIReactActions.goBack}/></IconButton>}
                     iconElementRight={
-                        <IconMenu iconButtonElement={
-                          <IconButton><MoreVert /></IconButton>
-                        }>
-                          <MenuItem onTouchTap={this.refresh} primaryText="Atualizar" />
-                        </IconMenu>
+                        <div>
+                            <IconButton><StarBorder onClick={this.toggleItem} onTouchTap={this.toggleItem} color={(_.findIndex(this.state.myTrackrData, (item) => { return item.code == this.state.code}) < 0) ? "white" : "yellow"} /></IconButton>
+                            <IconMenu iconButtonElement={
+                              <IconButton><MoreVert color="white" /></IconButton>
+                            }>
+                              <MenuItem onTouchTap={this.refresh} primaryText="Atualizar" />
+                            </IconMenu>
+                        </div>
                     } />
 
                 <div style={containerStyle}>
                     {
                         this.state.trackrData.map(item =>
-                            <Card key={(Math.ceil(Math.random() * 999999999999999))}>
+                            <Card key={(Math.ceil(Math.random() * 9999))}>
                                 <CardHeader
                                     title={item.data}
                                     subtitle={_.capitalize(item.local)}

@@ -23,6 +23,7 @@ import UIReactStore from '../stores/uireact';
 import TrackrStore from '../stores/trackr';
 // Actions
 import UIReactActions from '../actions/uireact';
+import TrackrActions from '../actions/trackr';
 
 /**
 * React-UI layout component
@@ -49,7 +50,8 @@ class UIReactLayout extends React.Component {
 
         // The LeftNav menu.
         this.menuItems = [
-          { route: '/', text: 'Home' },
+          { route: '/', text: 'Início' },
+          { route: '/track', text: 'Encomendas salvas' },
           { type: 'SUBHEADER', text: 'Resources' },
           {
              type: 'LINK',
@@ -74,6 +76,8 @@ class UIReactLayout extends React.Component {
             preLoader: false,
             message: false
         };
+
+        UIReactActions.setHistory(this.props.history);
     }
 
     /**
@@ -103,6 +107,7 @@ class UIReactLayout extends React.Component {
         // Send left nav to every component, allowing to trigger it
         // from everywhere
         UIReactActions.setLeftNav(this.refs.leftNav);
+        TrackrActions.syncLocalStorage();
     }
 
     /**
@@ -137,9 +142,9 @@ class UIReactLayout extends React.Component {
     handleDialogTap() {
         this.setState({message: false});
         // And wait 200ms to send user to the selected link
-        setTimeout(() => {
-            this.props.history.pushState(null, '/');
-        }, 200);
+        // setTimeout(() => {
+        //     this.props.history.pushState(null, '/');
+        // }, 200);
     }
 
     /**
@@ -159,6 +164,9 @@ class UIReactLayout extends React.Component {
             }
         ];
 
+        const { pathname } = this.props.location
+        const key = pathname.split('/')[1] || 'root'
+
         return (
             <div className="wrapper">
 
@@ -167,18 +175,17 @@ class UIReactLayout extends React.Component {
 
                 <Dialog
                     open={Boolean(this.state.message)}
-                    title="Erro"
+                    title={this.state.message.title}
                     actions={standardActions}
                     ref="requestDialog">
-                    {this.state.message}
+                    {this.state.message.detail}
                 </Dialog>
 
                 <div className="apps-wrapper" style={appsWrapperStyle}>
                     <ReactCSSTransitionGroup
                       component="div" transitionName="swap"
-                      transitionEnterTimeout={500} transitionLeaveTimeout={500}
-                    >
-                        {this.props.children}
+                      transitionEnterTimeout={500} transitionLeaveTimeout={500}>
+                        {React.cloneElement(this.props.children || <div />, { key: key })}
                     </ReactCSSTransitionGroup>
                 </div>
 

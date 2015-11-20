@@ -25,6 +25,20 @@ class UIReactActions {
     setLeftNav(leftNav) {
         this.dispatch(leftNav);
     }
+    /**
+     * Used to spread the history component trough other components.
+     *
+     * @param {History} history History object
+     */
+    setHistory(history) {
+        this.dispatch(history);
+    }
+    /**
+     * Smart Goback in navigation history
+     */
+    goBack() {
+        this.dispatch();
+    }
 }
 
 module.exports = Alt.createActions(UIReactActions);

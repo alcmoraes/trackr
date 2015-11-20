@@ -11,6 +11,7 @@ import createHashHistory from 'history/lib/createHashHistory';
 import UIReactLayout from './routers/layout';
 import UIReactHome from './routers/home/index';
 import TrackrHome from './routers/trackr/index';
+import TrackrMyPackages from './routers/trackr/my';
 import NotFound from './components/not-found';
 
 // Here we inject the 'onTouchTap' event on React Components
@@ -30,7 +31,8 @@ if(document.getElementById('trackr-app')) {
         <Router history={createHashHistory()} createElement={createElement}>
             <Route path="/" component={UIReactLayout}>
                 <IndexRoute component={UIReactHome} />
-                <Route path="/:code" component={TrackrHome} />
+                <Route path="/track" component={TrackrMyPackages} />
+                <Route path="/track/:code" component={TrackrHome} />
                 <Route path="*" component={NotFound}/>
             </Route>
         </Router>
