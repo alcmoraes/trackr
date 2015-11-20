@@ -27,10 +27,14 @@ class TrackrStore {
      * @return {Q\Promise}
      */
     _track(code) {
-        return Q.Promise((resolve, reject, notify) => {
+        return Q.Promise((resolve, reject) => {
             let request = new XMLHttpRequest();
 
             let url = this.package_track_url({code: code});
+
+            const PARSE_ERROR = "Código de rastreamento inválido.";
+            const STATUS_ERROR = "A API dos correios parece estar temporariamente indisponível.";
+            const XML_ERROR = "Código de rastreamento inválido ou serviço temporariamente indisponível.";
 
             request.open("GET", url, true);
 
@@ -41,20 +45,15 @@ class TrackrStore {
                         output = JSON.parse(request.responseText);
                         resolve(output);
                     } catch(err) {
-                        reject(new Error("Código de rastreamento inválido"));
+                        reject(new Error(PARSE_ERROR));
                     }
                 } else {
-                    alert('ha');
-                    reject(new Error("Status code was " + request.status));
+                    reject(new Error(STATUS_ERROR));
                 }
             };
 
-            request.onerror = (e) => {
-                reject(new Error(e));
-            };
-
-            request.onprogress = (event) => {
-                notify(event.loaded / event.total);
+            request.onerror = () => {
+                reject(new Error(XML_ERROR));
             };
 
             request.send();
@@ -74,17 +73,18 @@ class TrackrStore {
         .then((data) => {
             this.setState({
                 'trackrData': data.reverse(),
-                'code': code,
-                'preLoader': false,
                 'message': false
             });
         })
         .catch((err) => {
             this.setState({
-                'code': code,
                 'trackrData': [],
-                'preLoader': false,
-                'message': "Não foi possível encontrar o pacote. Tente novamente."
+                'message': err.message
+            });
+        }).finally(() => {
+            this.setState({
+                'code': code,
+                'preLoader': false
             });
         });
     }
