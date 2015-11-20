@@ -17,6 +17,7 @@ import LightRawTheme from 'material-ui/lib/styles/raw-themes/light-raw-theme';
 import Colors from 'material-ui/lib/styles/colors';
 // Stores
 import UIReactStore from '../../stores/uireact';
+import TrackrStore from '../../stores/trackr';
 // Actions
 import UIReactActions from '../../actions/uireact';
 
@@ -52,34 +53,41 @@ class UIReactHome extends React.Component {
          this.handleTouchTap = this.handleTouchTap.bind(this);
          this.triggerLeftNav = this.triggerLeftNav.bind(this);
 
+         this.state = TrackrStore.getState();
     }
 
     /**
      * Stores used by this component
      */
     static getStores() {
-        return [UIReactStore];
+        return [TrackrStore, UIReactStore]
     }
 
     /**
      * Used by Alt Flux to get properties from store
      */
     static getPropsFromStores() {
-        return UIReactStore.getState();
+        return {
+            ...TrackrStore.getState(),
+            ...UIReactStore.getState()
+        }
     }
 
     /**
-     * When component mount. Start listen to UIReact Store
+     * When component mount. Start listen to Trackr and UIReact Store.
      */
     componentDidMount() {
+        TrackrStore.listen(this.onChange);
         UIReactStore.listen(this.onChange);
         this.setState(UIReactStore.getState());
+        this.setState(TrackrStore.getState());
     }
 
     /**
      * When component unmount. Stop listen to UIReact Store
      */
     componentWillUnmount() {
+        TrackrStore.unlisten(this.onChange);
         UIReactStore.unlisten(this.onChange);
     }
 
@@ -144,6 +152,7 @@ class UIReactHome extends React.Component {
                     <div>
                         <TextField
                             ref="code"
+                            defaultValue={(this.state.hasOwnProperty('code') ? this.state.code : '')}
                             hintText="DM671114492BR" />
                     </div>
 

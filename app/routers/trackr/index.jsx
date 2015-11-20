@@ -156,7 +156,7 @@ class TrackrHome extends React.Component {
                 <div style={containerStyle}>
                     {
                         this.state.trackrData.map(item =>
-                            <Card key={(Math.ceil(Math.random() * 100))}>
+                            <Card key={(Math.ceil(Math.random() * 999999999999999))}>
                                 <CardHeader
                                     title={item.data}
                                     subtitle={_.capitalize(item.local)}

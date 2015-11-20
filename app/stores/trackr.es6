@@ -33,19 +33,30 @@ class TrackrStore {
             let url = this.package_track_url({code: code});
 
             request.open("GET", url, true);
+
             request.onload = () => {
                 if (request.status === 200) {
-                    resolve(JSON.parse(request.responseText));
+                    let output = false;
+                    try {
+                        output = JSON.parse(request.responseText);
+                        resolve(output);
+                    } catch(err) {
+                        reject(new Error("Código de rastreamento inválido"));
+                    }
                 } else {
+                    alert('ha');
                     reject(new Error("Status code was " + request.status));
                 }
             };
-            request.onerror = () => {
-                reject(new Error("Can't XHR " + JSON.stringify(url)));
+
+            request.onerror = (e) => {
+                reject(new Error(e));
             };
+
             request.onprogress = (event) => {
                 notify(event.loaded / event.total);
             };
+
             request.send();
         });
     }
@@ -54,10 +65,25 @@ class TrackrStore {
      * Fetch data from Correios API
      */
     onFetch(code) {
-        this.setState({'preLoader': true});
+        this.setState({
+            'message': false,
+            'preLoader': true,
+            'code': code
+        });
         this._track(code)
         .then((data) => {
-            this.setState({'trackrData': data.reverse(), 'preLoader': false});
+            this.setState({
+                'trackrData': data.reverse(),
+                'preLoader': false,
+                'message': false
+            });
+        })
+        .catch((err) => {
+            this.setState({
+                'trackrData': [],
+                'preLoader': false,
+                'message': "Não foi possível encontrar o pacote. Tente novamente."
+            });
         });
     }
 

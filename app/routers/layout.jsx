@@ -4,6 +4,7 @@ import connectToStores from 'alt/utils/connectToStores';
 // Needed for transition trough routes
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 // Material-UI components
+import Dialog from 'material-ui/lib/dialog';
 import LeftNav from 'material-ui/lib/left-nav';
 import AppBar from 'material-ui/lib/app-bar';
 import IconButton from 'material-ui/lib/icon-button';
@@ -66,10 +67,12 @@ class UIReactLayout extends React.Component {
          */
          this.onChange = this.onChange.bind(this);
          this.onLeftNavChange = this.onLeftNavChange.bind(this);
+         this.handleDialogTap = this.handleDialogTap.bind(this);
 
         // Set the initial state for the component
         this.state = {
-            preLoader: false
+            preLoader: false,
+            message: false
         };
     }
 
@@ -131,6 +134,14 @@ class UIReactLayout extends React.Component {
         }, 200);
     }
 
+    handleDialogTap() {
+        this.setState({message: false});
+        // And wait 200ms to send user to the selected link
+        setTimeout(() => {
+            this.props.history.pushState(null, '/');
+        }, 200);
+    }
+
     /**
      * Component Render
      */
@@ -141,11 +152,26 @@ class UIReactLayout extends React.Component {
             margin: '0 auto'
         }
 
+        let standardActions = [
+            {
+                text: 'Ok',
+                onTouchTap: this.handleDialogTap
+            }
+        ];
+
         return (
             <div className="wrapper">
 
                 <LeftNav onChange={this.onLeftNavChange} ref="leftNav" docked={false} menuItems={this.menuItems} />
                 <CircularProgressComponent active={this.state.preLoader} />
+
+                <Dialog
+                    open={Boolean(this.state.message)}
+                    title="Erro"
+                    actions={standardActions}
+                    ref="requestDialog">
+                    {this.state.message}
+                </Dialog>
 
                 <div className="apps-wrapper" style={appsWrapperStyle}>
                     <ReactCSSTransitionGroup
