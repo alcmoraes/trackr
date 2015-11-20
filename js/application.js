@@ -1,4 +1,4 @@
-/* Thu Nov 19 2015 14:55:19 GMT-0300 (BRT) */
+/* Thu Nov 19 2015 23:40:07 GMT-0200 (BRST) */
 /* React JS */
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
@@ -301,6 +301,8 @@ module.exports = NotFoundComponent;
 },{"react":345,"react-router":169}],7:[function(require,module,exports){
 'use strict';
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
@@ -379,6 +381,10 @@ var _storesUireact = require('../../stores/uireact');
 
 var _storesUireact2 = _interopRequireDefault(_storesUireact);
 
+var _storesTrackr = require('../../stores/trackr');
+
+var _storesTrackr2 = _interopRequireDefault(_storesTrackr);
+
 // Actions
 
 var _actionsUireact = require('../../actions/uireact');
@@ -423,6 +429,8 @@ var UIReactHome = (function (_React$Component) {
         this.onChange = this.onChange.bind(this);
         this.handleTouchTap = this.handleTouchTap.bind(this);
         this.triggerLeftNav = this.triggerLeftNav.bind(this);
+
+        this.state = _storesTrackr2['default'].getState();
     }
 
     /**
@@ -433,11 +441,13 @@ var UIReactHome = (function (_React$Component) {
         key: 'componentDidMount',
 
         /**
-         * When component mount. Start listen to UIReact Store
+         * When component mount. Start listen to Trackr and UIReact Store.
          */
         value: function componentDidMount() {
+            _storesTrackr2['default'].listen(this.onChange);
             _storesUireact2['default'].listen(this.onChange);
             this.setState(_storesUireact2['default'].getState());
+            this.setState(_storesTrackr2['default'].getState());
         }
 
         /**
@@ -446,6 +456,7 @@ var UIReactHome = (function (_React$Component) {
     }, {
         key: 'componentWillUnmount',
         value: function componentWillUnmount() {
+            _storesTrackr2['default'].unlisten(this.onChange);
             _storesUireact2['default'].unlisten(this.onChange);
         }
 
@@ -525,6 +536,7 @@ var UIReactHome = (function (_React$Component) {
                         null,
                         _react2['default'].createElement(_materialUiLibTextField2['default'], {
                             ref: 'code',
+                            defaultValue: this.state.hasOwnProperty('code') ? this.state.code : '',
                             hintText: 'DM671114492BR' })
                     ),
                     _react2['default'].createElement(_materialUiLibRaisedButton2['default'], { label: 'Rastrear', primary: true, onTouchTap: this.handleTouchTap })
@@ -534,7 +546,7 @@ var UIReactHome = (function (_React$Component) {
     }], [{
         key: 'getStores',
         value: function getStores() {
-            return [_storesUireact2['default']];
+            return [_storesTrackr2['default'], _storesUireact2['default']];
         }
 
         /**
@@ -543,7 +555,7 @@ var UIReactHome = (function (_React$Component) {
     }, {
         key: 'getPropsFromStores',
         value: function getPropsFromStores() {
-            return _storesUireact2['default'].getState();
+            return _extends({}, _storesTrackr2['default'].getState(), _storesUireact2['default'].getState());
         }
     }]);
 
@@ -556,7 +568,7 @@ var UIReactHome = (function (_React$Component) {
 module.exports = UIReactHome;
 
 
-},{"../../actions/uireact":2,"../../stores/uireact":11,"alt/utils/connectToStores":23,"material-ui/lib/app-bar":52,"material-ui/lib/dialog":62,"material-ui/lib/icon-button":68,"material-ui/lib/menus/icon-menu":77,"material-ui/lib/menus/menu-item":78,"material-ui/lib/raised-button":87,"material-ui/lib/styles/colors":92,"material-ui/lib/styles/raw-themes/light-raw-theme":95,"material-ui/lib/styles/theme-decorator":97,"material-ui/lib/styles/theme-manager":98,"material-ui/lib/svg-icons/navigation/more-vert":109,"material-ui/lib/text-field":110,"react":345}],8:[function(require,module,exports){
+},{"../../actions/uireact":2,"../../stores/trackr":10,"../../stores/uireact":11,"alt/utils/connectToStores":23,"material-ui/lib/app-bar":52,"material-ui/lib/dialog":62,"material-ui/lib/icon-button":68,"material-ui/lib/menus/icon-menu":77,"material-ui/lib/menus/menu-item":78,"material-ui/lib/raised-button":87,"material-ui/lib/styles/colors":92,"material-ui/lib/styles/raw-themes/light-raw-theme":95,"material-ui/lib/styles/theme-decorator":97,"material-ui/lib/styles/theme-manager":98,"material-ui/lib/svg-icons/navigation/more-vert":109,"material-ui/lib/text-field":110,"react":345}],8:[function(require,module,exports){
 'use strict';
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -588,6 +600,10 @@ var _reactAddonsCssTransitionGroup = require('react-addons-css-transition-group'
 var _reactAddonsCssTransitionGroup2 = _interopRequireDefault(_reactAddonsCssTransitionGroup);
 
 // Material-UI components
+
+var _materialUiLibDialog = require('material-ui/lib/dialog');
+
+var _materialUiLibDialog2 = _interopRequireDefault(_materialUiLibDialog);
 
 var _materialUiLibLeftNav = require('material-ui/lib/left-nav');
 
@@ -699,10 +715,12 @@ var UIReactLayout = (function (_React$Component) {
          */
         this.onChange = this.onChange.bind(this);
         this.onLeftNavChange = this.onLeftNavChange.bind(this);
+        this.handleDialogTap = this.handleDialogTap.bind(this);
 
         // Set the initial state for the component
         this.state = {
-            preLoader: false
+            preLoader: false,
+            message: false
         };
     }
 
@@ -761,6 +779,17 @@ var UIReactLayout = (function (_React$Component) {
                 _this.props.history.pushState(null, m.route);
             }, 200);
         }
+    }, {
+        key: 'handleDialogTap',
+        value: function handleDialogTap() {
+            var _this2 = this;
+
+            this.setState({ message: false });
+            // And wait 200ms to send user to the selected link
+            setTimeout(function () {
+                _this2.props.history.pushState(null, '/');
+            }, 200);
+        }
 
         /**
          * Component Render
@@ -774,11 +803,25 @@ var UIReactLayout = (function (_React$Component) {
                 margin: '0 auto'
             };
 
+            var standardActions = [{
+                text: 'Ok',
+                onTouchTap: this.handleDialogTap
+            }];
+
             return _react2['default'].createElement(
                 'div',
                 { className: 'wrapper' },
                 _react2['default'].createElement(_materialUiLibLeftNav2['default'], { onChange: this.onLeftNavChange, ref: 'leftNav', docked: false, menuItems: this.menuItems }),
                 _react2['default'].createElement(_componentsCircularProgress2['default'], { active: this.state.preLoader }),
+                _react2['default'].createElement(
+                    _materialUiLibDialog2['default'],
+                    {
+                        open: Boolean(this.state.message),
+                        title: 'Erro',
+                        actions: standardActions,
+                        ref: 'requestDialog' },
+                    this.state.message
+                ),
                 _react2['default'].createElement(
                     'div',
                     { className: 'apps-wrapper', style: appsWrapperStyle },
@@ -818,7 +861,7 @@ var UIReactLayout = (function (_React$Component) {
 module.exports = UIReactLayout;
 
 
-},{"../actions/uireact":2,"../components/circular-progress":5,"../stores/trackr":10,"../stores/uireact":11,"alt/utils/connectToStores":23,"material-ui/lib/app-bar":52,"material-ui/lib/icon-button":68,"material-ui/lib/left-nav":69,"material-ui/lib/menus/icon-menu":77,"material-ui/lib/menus/menu-item":78,"material-ui/lib/styles/colors":92,"material-ui/lib/styles/raw-themes/light-raw-theme":95,"material-ui/lib/styles/theme-decorator":97,"material-ui/lib/styles/theme-manager":98,"material-ui/lib/svg-icons/navigation/more-vert":109,"react":345,"react-addons-css-transition-group":145}],9:[function(require,module,exports){
+},{"../actions/uireact":2,"../components/circular-progress":5,"../stores/trackr":10,"../stores/uireact":11,"alt/utils/connectToStores":23,"material-ui/lib/app-bar":52,"material-ui/lib/dialog":62,"material-ui/lib/icon-button":68,"material-ui/lib/left-nav":69,"material-ui/lib/menus/icon-menu":77,"material-ui/lib/menus/menu-item":78,"material-ui/lib/styles/colors":92,"material-ui/lib/styles/raw-themes/light-raw-theme":95,"material-ui/lib/styles/theme-decorator":97,"material-ui/lib/styles/theme-manager":98,"material-ui/lib/svg-icons/navigation/more-vert":109,"react":345,"react-addons-css-transition-group":145}],9:[function(require,module,exports){
 'use strict';
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -1060,7 +1103,7 @@ var TrackrHome = (function (_React$Component) {
                 { className: 'app-screen trackr-app-wrapper' },
                 _react2['default'].createElement(_materialUiLibAppBar2['default'], {
                     className: 'app-bar',
-                    title: this.props.params.code,
+                    title: Boolean(this.state.message) ? "" : this.state.code,
                     iconElementLeft: _react2['default'].createElement(
                         _materialUiLibIconButton2['default'],
                         null,
@@ -1081,7 +1124,7 @@ var TrackrHome = (function (_React$Component) {
                     this.state.trackrData.map(function (item) {
                         return _react2['default'].createElement(
                             _materialUiLibCardCard2['default'],
-                            { key: Math.ceil(Math.random() * 100) },
+                            { key: Math.ceil(Math.random() * 999999999999999) },
                             _react2['default'].createElement(_materialUiLibCardCardHeader2['default'], {
                                 title: item.data,
                                 subtitle: _lodash2['default'].capitalize(item.local),
@@ -1199,19 +1242,30 @@ var TrackrStore = (function () {
                 var url = _this.package_track_url({ code: code });
 
                 request.open("GET", url, true);
+
                 request.onload = function () {
                     if (request.status === 200) {
-                        resolve(JSON.parse(request.responseText));
+                        var output = false;
+                        try {
+                            output = JSON.parse(request.responseText);
+                            resolve(output);
+                        } catch (err) {
+                            reject(new Error("Código de rastreamento inválido"));
+                        }
                     } else {
+                        alert('ha');
                         reject(new Error("Status code was " + request.status));
                     }
                 };
-                request.onerror = function () {
-                    reject(new Error("Can't XHR " + JSON.stringify(url)));
+
+                request.onerror = function (e) {
+                    reject(new Error(e));
                 };
+
                 request.onprogress = function (event) {
                     notify(event.loaded / event.total);
                 };
+
                 request.send();
             });
         }
@@ -1224,9 +1278,25 @@ var TrackrStore = (function () {
         value: function onFetch(code) {
             var _this2 = this;
 
-            this.setState({ 'preLoader': true });
+            this.setState({
+                'message': false,
+                'preLoader': true,
+                'code': 'Carregando...'
+            });
             this._track(code).then(function (data) {
-                _this2.setState({ 'trackrData': data.reverse(), 'preLoader': false });
+                _this2.setState({
+                    'trackrData': data.reverse(),
+                    'code': code,
+                    'preLoader': false,
+                    'message': false
+                });
+            })['catch'](function (err) {
+                _this2.setState({
+                    'code': code,
+                    'trackrData': [],
+                    'preLoader': false,
+                    'message': "Não foi possível encontrar o pacote. Tente novamente."
+                });
             });
         }
     }]);
