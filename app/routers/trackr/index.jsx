@@ -143,7 +143,7 @@ class TrackrHome extends React.Component {
 
                 <AppBar
                     className="app-bar"
-                    title={this.props.params.code}
+                    title={Boolean(this.state.message) ? "" : this.state.code}
                     iconElementLeft={<IconButton><NavigationBack onTouchTap={this.historyBack}/></IconButton>}
                     iconElementRight={
                         <IconMenu iconButtonElement={

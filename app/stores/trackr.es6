@@ -68,18 +68,20 @@ class TrackrStore {
         this.setState({
             'message': false,
             'preLoader': true,
-            'code': code
+            'code': 'Carregando...'
         });
         this._track(code)
         .then((data) => {
             this.setState({
                 'trackrData': data.reverse(),
+                'code': code,
                 'preLoader': false,
                 'message': false
             });
         })
         .catch((err) => {
             this.setState({
+                'code': code,
                 'trackrData': [],
                 'preLoader': false,
                 'message': "Não foi possível encontrar o pacote. Tente novamente."
